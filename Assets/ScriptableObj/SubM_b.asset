@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71ab184b6a5278f4f902127296584d19, type: 3}
+  m_Name: SubM_b
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponData
+  _weaponType: 0
+  _fireMode: 1
+  _hitMethod: 0
+  _projectileCount: 1
+  _spreadAngle: 6
+  _fireInterval: 0
+  _bulletSpeed: 30
+  _damage: 5
+  _magazineSize: 45
+  _reloadTime: 1.8
+  _bulletPrefab: {fileID: 0}
+  _weaponPrefab: {fileID: 0}
