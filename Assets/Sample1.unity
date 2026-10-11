@@ -416,6 +416,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player
   _moveSpeed: 5
+  _dodgeSpeed: 15
+  _dodgeCoolTime: 1
+  _dodgeTime: 0.3
 --- !u!114 &245481781
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -428,7 +431,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 388a6316e1b7baa42aba1cf5ed822d5f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAim
-  _mainCamera: {fileID: 1223399054}
 --- !u!1 &457639491
 GameObject:
   m_ObjectHideFlags: 0
