@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody))]
 public class Player : MonoBehaviour
@@ -19,10 +20,25 @@ public class Player : MonoBehaviour
 
     void Update()
     {
+        //キーボード入力
         float x = Input.GetAxisRaw("Horizontal");
         float z = Input.GetAxisRaw("Vertical");
 
-        _moveInput = new Vector2(x, z).normalized;
+        Vector2 keyboardInput = new Vector2(x, z);
+
+        //コントローラーの左スティック入力
+        Vector2 stickInput = Vector2.zero;
+
+        if(Gamepad.current != null)
+        {
+            stickInput = Gamepad.current.leftStick.ReadValue();
+        }
+
+        //入力があるほうを採用
+        _moveInput = stickInput.sqrMagnitude > 0.01f ? stickInput : keyboardInput;
+
+        //斜め移動速度を一定にする
+        _moveInput = Vector2.ClampMagnitude(_moveInput, 1f);
     }
     private void FixedUpdate()
     {
