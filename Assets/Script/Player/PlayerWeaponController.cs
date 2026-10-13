@@ -12,12 +12,25 @@ public class PlayerWeaponController : MonoBehaviour
     [SerializeField] Transform _firePointTransform;
     [SerializeField] GameObject _handgunPrefab;
     [SerializeField] TextMeshProUGUI _currenIndexText;
+    [Header("予備弾薬最大所持数")]
+    [SerializeField]    int[] _maxAmmo = new int[4];
+    [Header("予備弾薬所持数")]
+    [SerializeField] int[] _ammo = new int[4];
+
+    // 武器種ごとの予備弾薬の最大所持数
+    Dictionary<WeaponType, int> _maxReserveAmmoDic =
+        new Dictionary<WeaponType, int>();
+
+    // 武器種ごとの現在の予備弾薬数
+    Dictionary<WeaponType, int> _reserveAmmoDic =
+        new Dictionary<WeaponType, int>();
 
     GameObject[] _weaponSlot = new GameObject[3];
     GameObject _stageManagerObj;
 
     //装備中のスロット番号
     int _currentSlotIndex = 0;
+
     public ReactiveProperty<int> CurrentSlotIndex = new ReactiveProperty<int>(2);
     //装備中の武器のWeapon.cs
     Weapon _weaponCs;
@@ -32,6 +45,14 @@ public class PlayerWeaponController : MonoBehaviour
     private void Awake()
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
+
+        //インスペクターからの設定をDictionaryに適応
+        for(int i = 0; i < _maxAmmo.Length; i++)
+        {
+            WeaponType type = (WeaponType)i;
+            _maxReserveAmmoDic[type] = _maxAmmo[i];
+            _reserveAmmoDic[type] = _ammo[i];
+        }
     }
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
@@ -78,52 +99,62 @@ public class PlayerWeaponController : MonoBehaviour
         }
 
         //武器装備スロット切り替え
-        if (Input.GetKeyDown(KeyCode.Alpha1) && _weaponSlot[0] != null)
+
+        //射撃中でもリロード中でもないときスロット切り替え可能
+        if(_weaponCs._fireIntervalTimer <= 0 &&_weaponCs._reloadIntervalTimer <= 0)
         {
-            _currentSlotIndex = 0;
-            CurrentSlotIndex.Value = 0;
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha2) && _weaponSlot[1] != null)
-        {
-            _currentSlotIndex = 1;
-            CurrentSlotIndex.Value = 1;
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            _currentSlotIndex = 2;
-            CurrentSlotIndex.Value = 2;
-        }
-        if (Gamepad.current != null && Gamepad.current.leftShoulder.wasPressedThisFrame)
-        {
-            if (_weaponSlot[0] != null && _weaponSlot[1] != null)
+            //キーボード入力
+            if (Input.GetKeyDown(KeyCode.Alpha1) && _weaponSlot[0] != null)
             {
-                _currentSlotIndex--;
-                CurrentSlotIndex.Value--;
+                _currentSlotIndex = 0;
+                CurrentSlotIndex.Value = 0;
             }
-            if (_weaponSlot[1] == null)
+            if (Input.GetKeyDown(KeyCode.Alpha2) && _weaponSlot[1] != null)
             {
                 _currentSlotIndex = 1;
                 CurrentSlotIndex.Value = 1;
             }
-        }
-        if (Gamepad.current != null && Gamepad.current.rightShoulder.wasPressedThisFrame)
-        {
-            _currentSlotIndex++;
-            CurrentSlotIndex.Value++;
-            if (_weaponSlot[1] == null)
+            if (Input.GetKeyDown(KeyCode.Alpha3))
             {
                 _currentSlotIndex = 2;
                 CurrentSlotIndex.Value = 2;
             }
+            //コントローラー入力
+            if (Gamepad.current != null && Gamepad.current.leftShoulder.wasPressedThisFrame)
+            {
+                if (_weaponSlot[0] != null && _weaponSlot[1] != null)
+                {
+                    _currentSlotIndex--;
+                    CurrentSlotIndex.Value--;
+                }
+                if (_weaponSlot[1] == null)
+                {
+                    _currentSlotIndex = 1;
+                    CurrentSlotIndex.Value = 1;
+                }
+            }
+            if (Gamepad.current != null && Gamepad.current.rightShoulder.wasPressedThisFrame)
+            {
+                _currentSlotIndex++;
+                CurrentSlotIndex.Value++;
+                if (_weaponSlot[1] == null)
+                {
+                    _currentSlotIndex = 2;
+                    CurrentSlotIndex.Value = 2;
+                }
+            }
+            _currentSlotIndex = Mathf.Clamp(_currentSlotIndex, 0, 2);
+            CurrentSlotIndex.Value = Mathf.Clamp(CurrentSlotIndex.Value, 0, 2);
         }
-        _currentSlotIndex = Mathf.Clamp(_currentSlotIndex, 0, 2);
-        CurrentSlotIndex.Value = Mathf.Clamp(CurrentSlotIndex.Value, 0, 2);
+        
 
 
-        //射撃入力
+        //強化要素がないとき
         if (_stageManagerObj == null && _weaponCs != null)
         {
-            if(_weaponCs._weaponData._fireMode == FireMode.SemiAuto)
+
+            //射撃入力
+            if (_weaponCs._weaponData._fireMode == FireMode.SemiAuto)
             {
                 //キーボード入力
                 if (Input.GetKeyDown(KeyCode.Mouse0))
@@ -147,6 +178,24 @@ public class PlayerWeaponController : MonoBehaviour
                 if (Gamepad.current != null && Gamepad.current.rightTrigger.isPressed)
                 {
                     _weaponCs.FullAutoShot();
+                }
+            }
+
+            //リロード入力
+            //キーボード入力
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                if (TryReload())
+                {
+                    _weaponCs.Reload(ReturnNeedAmmo());
+                }
+            }
+            //コントローラー入力
+            if(Gamepad.current != null && Gamepad.current.buttonNorth.wasPressedThisFrame)
+            {
+                if (TryReload())
+                {
+                    _weaponCs.Reload(ReturnNeedAmmo());
                 }
             }
         }
@@ -199,19 +248,58 @@ public class PlayerWeaponController : MonoBehaviour
         if (index == 0)
         {
             weaponObj.transform.position = new Vector3(0, 100f, 0);
-            weaponObj.gameObject.SetActive(false);
         }
         if (index == 1)
         {
             weaponObj.transform.position = new Vector3(0, 200f, 0);
-            weaponObj.gameObject.SetActive(false);
 
         }
     }
     void PickUpWeaponIn(GameObject weaponObj, Vector3 dropPos)
     {
-        weaponObj.gameObject.SetActive(true);
         weaponObj.transform.position = dropPos;
+
+    }
+    bool TryReload()
+    {
+        if (_weaponCs._fireIntervalTimer > 0)
+        {
+            Debug.Log("射撃インターバル中はリロード不可");
+            return false;
+        }
+        if (_weaponCs._reloadIntervalTimer > 0)
+        {
+            Debug.Log("リロードインターバル中はリロード不可");
+            return false;
+        }
+        //武器種を取得
+        WeaponType weaponType = _weaponCs._weaponData._weaponType;
+        if (_reserveAmmoDic[weaponType] <= 0)
+        {
+            Debug.Log("予備弾薬無し");
+            return false;
+        }
+        if(_weaponCs._currentMagazineAmmo >= _weaponCs._weaponData._magazineSize)
+        {
+            Debug.Log("マガジンが満タン");
+            return false;
+        }
+        return true;
+        
+    }
+    int ReturnNeedAmmo()
+    {
+        //武器種を取得
+        WeaponType weaponType = _weaponCs._weaponData._weaponType;
+        //必要弾薬数取得
+        int needAmmo = _weaponCs._weaponData._magazineSize - _weaponCs._currentMagazineAmmo;
+        // 実際に補充できる弾数
+        int addAmmo = Mathf.Min(needAmmo,_reserveAmmoDic[weaponType]);
+
+        // 予備弾薬から補充予定の弾数を引く
+        _reserveAmmoDic[weaponType] -= addAmmo;
+
+        return addAmmo;
 
     }
     private void OnTriggerEnter(Collider other)

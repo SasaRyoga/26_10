@@ -10,9 +10,10 @@ public class Weapon : MonoBehaviour
 
     //マガジン残段数
     public int _currentMagazineAmmo;
+    int _pendingReloadAmmo;
 
-    float _fireIntervalTimer = 0;
-
+    public float _fireIntervalTimer = 0;
+    public float _reloadIntervalTimer = 0;
 
     void Start()
     {
@@ -21,12 +22,35 @@ public class Weapon : MonoBehaviour
     }
     private void Update()
     {
-        if(_fireIntervalTimer >= 0f)
+
+        //Fireインターバル中
+        if (_fireIntervalTimer > 0)
         {
             _fireIntervalTimer -= Time.deltaTime;
+            if( _fireIntervalTimer <= 0)
+            {
+                _fireIntervalTimer = 0;
+            }
         }
+        // リロード中
+        if (_reloadIntervalTimer > 0)
+        {
+            _reloadIntervalTimer -= Time.deltaTime;
 
+            // リロード時間が終了した
+            if (_reloadIntervalTimer <= 0)
+            {
+                _reloadIntervalTimer = 0;
 
+                // マガジンに弾薬を補充
+                _currentMagazineAmmo += _pendingReloadAmmo;
+
+                Debug.Log("リロード完了");
+
+                // 補充予定の弾数をリセット
+                _pendingReloadAmmo = 0;
+            }
+        }
     }
 
     public void FullAutoShot()
@@ -34,12 +58,16 @@ public class Weapon : MonoBehaviour
         //射撃間隔中なら撃てない
         if (_fireIntervalTimer > 0)
         {
+            Debug.Log("射撃インターバル中");
+            Debug.Log(_fireIntervalTimer);
             return;
         }
         //マガジン０なら撃てない
         if (_currentMagazineAmmo <= 0)
         {
+            Debug.Log("マガジン０");
             return;
+
         }
         //射撃インターバル開始
         _fireIntervalTimer = _weaponData._fireInterval;
@@ -95,8 +123,13 @@ public class Weapon : MonoBehaviour
 
     }
 
-    public void Reroad()
+    public void Reload(int addAmmo)
     {
+        //リロードインターバル開始
+        _reloadIntervalTimer = _weaponData._reloadTime;
+
+        // 補充予定の弾数を保存
+        _pendingReloadAmmo = addAmmo;
 
     }
 }
