@@ -6,7 +6,7 @@ public class Weapon : MonoBehaviour
     //残弾数、射撃、発射間隔、リロードを管理する
 
 
-    [SerializeField]    WeaponData _weaponData;
+    [SerializeField]    public WeaponData _weaponData;
 
     //マガジン残段数
     public int _currentMagazineAmmo;
@@ -53,10 +53,12 @@ public class Weapon : MonoBehaviour
         if (_weaponData._hitMethod == HitMethod.Projectile)
         {
             //弾生成処理
+            Debug.Log("弾生成");
         }
         else
         {
             //Raycast処理
+            Debug.Log("Raycast処理");
         }
     }
     public void SemiAutoShot()
@@ -83,10 +85,12 @@ public class Weapon : MonoBehaviour
         if(_weaponData._hitMethod == HitMethod.Projectile)
         {
             //弾生成処理
+            Debug.Log("弾生成");
         }
         else
         {
             //Raycast処理
+            Debug.Log("Raycast処理");
         }
 
     }
