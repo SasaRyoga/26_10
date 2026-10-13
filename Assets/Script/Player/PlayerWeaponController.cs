@@ -27,6 +27,7 @@ public class PlayerWeaponController : MonoBehaviour
 
     GameObject[] _weaponSlot = new GameObject[3];
     GameObject _stageManagerObj;
+    StageManager _stageManagerCs;
 
     //装備中のスロット番号
     int _currentSlotIndex = 0;
@@ -57,6 +58,7 @@ public class PlayerWeaponController : MonoBehaviour
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         _stageManagerObj = GameObject.FindGameObjectWithTag("StageManager");
+        _stageManagerCs = _stageManagerObj?.GetComponent<StageManager>();
         _currentSlotIndex = 2;
         CurrentSlotIndex.Value = 2;
     }
@@ -83,20 +85,25 @@ public class PlayerWeaponController : MonoBehaviour
 
     void Update()
     {
-        //武器を拾う交換する
-        if (_nearByWeapon != null)
+        //射撃中でもリロード中でもないときスロット切り替え可能
+        if (_weaponCs._fireIntervalTimer <= 0 && _weaponCs._reloadIntervalTimer <= 0)
         {
-            //キーボード入力
-            if (Input.GetKeyDown(KeyCode.F))
+            //武器を拾う交換する
+            if (_nearByWeapon != null)
             {
-                PickUpWeapon();
-            }
-            //コントローラー入力
-            if (Gamepad.current != null && Gamepad.current.buttonWest.wasPressedThisFrame)
-            {
-                PickUpWeapon();
+                //キーボード入力
+                if (Input.GetKeyDown(KeyCode.F))
+                {
+                    PickUpWeapon();
+                }
+                //コントローラー入力
+                if (Gamepad.current != null && Gamepad.current.buttonWest.wasPressedThisFrame)
+                {
+                    PickUpWeapon();
+                }
             }
         }
+
 
         //武器装備スロット切り替え
 
@@ -199,6 +206,84 @@ public class PlayerWeaponController : MonoBehaviour
                 }
             }
         }
+        //強化要素があるとき
+        if(_stageManagerObj  != null && _weaponCs != null)
+        {
+            //射撃入力　単押し
+            if (_weaponCs._weaponData._fireMode == FireMode.SemiAuto)
+            {
+                //装備中の武器タイプ取得
+                WeaponType weaponType = _weaponCs._weaponData._weaponType;
+                //ダメージ倍率取得
+                float damagePrd = _stageManagerCs.GetDamageProduct(weaponType);
+                //射撃間隔取得
+                float fireInterval = _stageManagerCs.GetFireIntervalProduct(weaponType);
+
+                //キーボード入力
+                if (Input.GetKeyDown(KeyCode.Mouse0))
+                {
+                    _weaponCs.EnhancedSemiAutoShot(fireInterval, damagePrd);
+                }
+                //コントローラー入力
+                if (Gamepad.current != null && Gamepad.current.rightTrigger.wasPressedThisFrame)
+                {
+                    _weaponCs.EnhancedSemiAutoShot(fireInterval, damagePrd);
+                }
+            }
+            //射撃入力　長押し
+            if (_weaponCs._weaponData._fireMode == FireMode.FullAuto)
+            {
+                //装備中の武器タイプ取得
+                WeaponType weaponType = _weaponCs._weaponData._weaponType;
+                //ダメージ倍率取得
+                float damagePrd = _stageManagerCs.GetDamageProduct(weaponType);
+                //射撃間隔取得
+                float fireInterval = _stageManagerCs.GetFireIntervalProduct(weaponType);
+
+                //キーボード入力
+                if (Input.GetKey(KeyCode.Mouse0))
+                {
+                    _weaponCs.EnhancedFullAutoShot(fireInterval, damagePrd);
+                }
+                //コントローラー入力
+                if (Gamepad.current != null && Gamepad.current.rightTrigger.isPressed)
+                {
+                    _weaponCs.EnhancedFullAutoShot(fireInterval, damagePrd);
+                }
+
+
+            }
+
+            //リロード入力
+            //キーボード入力
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                //装備中の武器タイプ取得
+                WeaponType weaponType = _weaponCs._weaponData._weaponType;
+                //リロード短縮倍率取得
+                float reloadInterval = _stageManagerCs.GetReloadIntervalProduct(weaponType);
+                //強化後マガジンサイズ取得
+                int maxMagazineSize = _weaponCs._weaponData._magazineSize + _stageManagerCs.GetMagazineSizeSum(weaponType);
+                if (EnhancedTryReload(weaponType,maxMagazineSize))
+                {
+                    _weaponCs.EnhanceReload(reloadInterval,EnhancedReturnNeedAmmo(weaponType, maxMagazineSize));
+                }
+            }
+            //コントローラー入力
+            if (Gamepad.current != null && Gamepad.current.buttonNorth.wasPressedThisFrame)
+            {
+                //装備中の武器タイプ取得
+                WeaponType weaponType = _weaponCs._weaponData._weaponType;
+                //リロード短縮倍率取得
+                float reloadInterval = _stageManagerCs.GetReloadIntervalProduct(weaponType);
+                //強化後マガジンサイズ取得
+                int maxMagazineSize = _weaponCs._weaponData._magazineSize + _stageManagerCs.GetMagazineSizeSum(weaponType);
+                if (EnhancedTryReload(weaponType, maxMagazineSize))
+                {
+                    _weaponCs.EnhanceReload(reloadInterval, EnhancedReturnNeedAmmo(weaponType, maxMagazineSize));
+                }
+            }
+        }
 
     }
     void PickUpWeapon()
@@ -260,6 +345,31 @@ public class PlayerWeaponController : MonoBehaviour
         weaponObj.transform.position = dropPos;
 
     }
+    bool EnhancedTryReload(WeaponType weaponType, int maxMagazineSize)
+    {
+        if (_weaponCs._fireIntervalTimer > 0)
+        {
+            Debug.Log("射撃インターバル中はリロード不可");
+            return false;
+        }
+        if (_weaponCs._reloadIntervalTimer > 0)
+        {
+            Debug.Log("リロードインターバル中はリロード不可");
+            return false;
+        }
+
+        if (_reserveAmmoDic[weaponType] <= 0)
+        {
+            Debug.Log("予備弾薬無し");
+            return false;
+        }
+        if (_weaponCs._currentMagazineAmmo >= maxMagazineSize)
+        {
+            Debug.Log("マガジンが満タン");
+            return false;
+        }
+        return true;
+    }
     bool TryReload()
     {
         if (_weaponCs._fireIntervalTimer > 0)
@@ -287,10 +397,23 @@ public class PlayerWeaponController : MonoBehaviour
         return true;
         
     }
+    int EnhancedReturnNeedAmmo(WeaponType weaponType, int maxMagazineSize)
+    {
+        //必要弾薬数取得
+        int needAmmo = maxMagazineSize - _weaponCs._currentMagazineAmmo;
+        // 実際に補充できる弾数
+        int addAmmo = Mathf.Min(needAmmo, _reserveAmmoDic[weaponType]);
+
+        // 予備弾薬から補充予定の弾数を引く
+        _reserveAmmoDic[weaponType] -= addAmmo;
+
+        return addAmmo;
+    }
     int ReturnNeedAmmo()
     {
         //武器種を取得
         WeaponType weaponType = _weaponCs._weaponData._weaponType;
+
         //必要弾薬数取得
         int needAmmo = _weaponCs._weaponData._magazineSize - _weaponCs._currentMagazineAmmo;
         // 実際に補充できる弾数

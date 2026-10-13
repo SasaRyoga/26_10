@@ -32,6 +32,26 @@ public class StageManager : MonoBehaviour
     {
         
     }
+    public int GetMagazineSizeSum(WeaponType type)
+    {
+        return _magazineSizeSumDct[type];
+    }
+    public float GetFireIntervalProduct(WeaponType type)
+    {
+        return _fireIntervalProductDct[type];
+    }
+    public float GetReloadIntervalProduct(WeaponType type)
+    {
+        return _reloadIntervalProductDct[type];
+    }
+    public float GetDamageProduct(WeaponType type)
+    {
+        return _damageProductDct[type];
+    }
+    public float GetSpreadProduct(WeaponType type)
+    {
+        return _spreadAngleProductDct[type];
+    }
     void SetupDct()
     {
         for(int i = 0; i < 4; i++)

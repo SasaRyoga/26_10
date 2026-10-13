@@ -132,4 +132,80 @@ public class Weapon : MonoBehaviour
         _pendingReloadAmmo = addAmmo;
 
     }
+    public void EnhanceReload(float reloadTime, int addAmmo)
+    {
+        //リロードインターバル開始
+        _reloadIntervalTimer = _weaponData._reloadTime * reloadTime;
+
+        //補充予定の段数を保存
+        _pendingReloadAmmo = addAmmo;
+    }
+    public void EnhancedSemiAutoShot(float fireInterval, float damage)
+    {
+        //射撃間隔中なら撃てない
+        if (_fireIntervalTimer > 0)
+        {
+            return;
+        }
+        //マガジン０なら撃てない
+        if (_currentMagazineAmmo <= 0)
+        {
+            return;
+        }
+        //射撃インターバル開始
+        _fireIntervalTimer = _weaponData._fireInterval * fireInterval;
+
+        //弾消費
+        _currentMagazineAmmo--;
+
+        //ここから発射処理
+
+        //弾の発射が生成である場合
+        if (_weaponData._hitMethod == HitMethod.Projectile)
+        {
+            //弾生成処理
+            //ダメージ加算処理
+            Debug.Log("弾生成 damage×" + damage);
+        }
+        else
+        {
+            //Raycast処理
+            //ダメージ加算処理
+            Debug.Log("Raycast処理×" + damage);
+        }
+    }
+    public void EnhancedFullAutoShot(float fireInterval, float damage)
+    {
+        //射撃間隔中なら撃てない
+        if (_fireIntervalTimer > 0)
+        {
+            return;
+        }
+        //マガジン０なら撃てない
+        if (_currentMagazineAmmo <= 0)
+        {
+            return;
+        }
+        //射撃インターバル開始
+        _fireIntervalTimer = _weaponData._fireInterval * fireInterval;
+
+        //弾消費
+        _currentMagazineAmmo--;
+
+        //ここから発射処理
+
+        //弾の発射が生成である場合
+        if (_weaponData._hitMethod == HitMethod.Projectile)
+        {
+            //弾生成処理
+            //ダメージ加算処理
+            Debug.Log("弾生成 damage×" + damage);
+        }
+        else
+        {
+            //Raycast処理
+            //ダメージ加算処理
+            Debug.Log("Raycast処理×" + damage);
+        }
+    }
 }
