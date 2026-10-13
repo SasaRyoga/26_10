@@ -50,6 +50,7 @@ public class PlayerWeaponController : MonoBehaviour
             {
                 _weaponCs =
                     _weaponSlot[index].GetComponent<Weapon>();
+                Debug.Log("Weapon.cs取得");
             }
             else
             {
@@ -117,10 +118,37 @@ public class PlayerWeaponController : MonoBehaviour
         }
         _currentSlotIndex = Mathf.Clamp(_currentSlotIndex, 0, 2);
         CurrentSlotIndex.Value = Mathf.Clamp(CurrentSlotIndex.Value, 0, 2);
+
+
         //射撃入力
-        if (_stageManagerObj == null)
+        if (_stageManagerObj == null && _weaponCs != null)
         {
-            //_weaponSlot[_currentSlotIndex].GetComponent<Weapon>().;
+            if(_weaponCs._weaponData._fireMode == FireMode.SemiAuto)
+            {
+                //キーボード入力
+                if (Input.GetKeyDown(KeyCode.Mouse0))
+                {
+                    _weaponCs.SemiAutoShot();
+                }
+                //コントローラー入力
+                if(Gamepad.current != null && Gamepad.current.rightTrigger.wasPressedThisFrame)
+                {
+                    _weaponCs.SemiAutoShot();
+                }
+            }
+            if(_weaponCs._weaponData._fireMode == FireMode.FullAuto)
+            {
+                //キーボード入力
+                if (Input.GetKey(KeyCode.Mouse0))
+                {
+                    _weaponCs.FullAutoShot();
+                }
+                //コントローラー入力
+                if (Gamepad.current != null && Gamepad.current.rightTrigger.isPressed)
+                {
+                    _weaponCs.FullAutoShot();
+                }
+            }
         }
 
     }
@@ -158,6 +186,7 @@ public class PlayerWeaponController : MonoBehaviour
                 PickUpWeaponIn(_weaponSlot[_currentSlotIndex], _dropPosition);
                 _weaponSlot[_currentSlotIndex] = _nearByWeapon;
                 _weaponCs = _nearByWeapon.GetComponent<Weapon>();
+                Debug.Log("Weapon.cs取得");
                 PickUpWeaponOut(_weaponSlot[_currentSlotIndex], _currentSlotIndex);
                 _nearByWeapon = null;
                 return;
