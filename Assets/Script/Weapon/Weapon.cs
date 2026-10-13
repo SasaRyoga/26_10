@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Weapon : MonoBehaviour
 {
@@ -6,10 +7,12 @@ public class Weapon : MonoBehaviour
 
 
     [SerializeField]    WeaponData _weaponData;
+
     //マガジン残段数
     public int _currentMagazineAmmo;
 
     float _fireIntervalTimer = 0;
+
 
     void Start()
     {
