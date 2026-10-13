@@ -447,6 +447,10 @@ MonoBehaviour:
   _firePointTransform: {fileID: 1658907639}
   _handgunPrefab: {fileID: 906367442275530936, guid: 86d3c0b89208bb9429ad60615d24530a, type: 3}
   _currenIndexText: {fileID: 299505408}
+  _maxAmmo: c8000000c8000000c8000000c8000000
+  _ammo: c8000000c8000000c8000000c8000000
+  CurrentSlotIndex:
+    value: 0
 --- !u!1 &299505407
 GameObject:
   m_ObjectHideFlags: 0
