@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71ab184b6a5278f4f902127296584d19, type: 3}
   m_Name: Hundgun
   m_EditorClassIdentifier: Assembly-CSharp::WeaponData
-  _weaponType: 3
+  _weaponType: 4
   _fireMode: 0
   _hitMethod: 1
   _projectileCount: 1

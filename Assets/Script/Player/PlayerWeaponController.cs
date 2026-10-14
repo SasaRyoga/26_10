@@ -222,12 +222,26 @@ public class PlayerWeaponController : MonoBehaviour
                 //キーボード入力
                 if (Input.GetKeyDown(KeyCode.Mouse0))
                 {
-                    _weaponCs.EnhancedSemiAutoShot(fireInterval, damagePrd);
+                    if(weaponType == WeaponType.HandGun)
+                    {
+                        _weaponCs.SemiAutoShot();
+                    }
+                    else
+                    {
+                        _weaponCs.EnhancedSemiAutoShot(fireInterval, damagePrd);
+                    }
                 }
                 //コントローラー入力
                 if (Gamepad.current != null && Gamepad.current.rightTrigger.wasPressedThisFrame)
                 {
-                    _weaponCs.EnhancedSemiAutoShot(fireInterval, damagePrd);
+                    if (weaponType == WeaponType.HandGun)
+                    {
+                        _weaponCs.SemiAutoShot();
+                    }
+                    else
+                    {
+                        _weaponCs.EnhancedSemiAutoShot(fireInterval, damagePrd);
+                    }
                 }
             }
             //射撃入力　長押し
@@ -243,12 +257,26 @@ public class PlayerWeaponController : MonoBehaviour
                 //キーボード入力
                 if (Input.GetKey(KeyCode.Mouse0))
                 {
-                    _weaponCs.EnhancedFullAutoShot(fireInterval, damagePrd);
+                    if(weaponType == WeaponType.HandGun)
+                    {
+                        _weaponCs.FullAutoShot();
+                    }
+                    else
+                    {
+                        _weaponCs.EnhancedFullAutoShot(fireInterval, damagePrd);
+                    }
                 }
                 //コントローラー入力
                 if (Gamepad.current != null && Gamepad.current.rightTrigger.isPressed)
                 {
-                    _weaponCs.EnhancedFullAutoShot(fireInterval, damagePrd);
+                    if (weaponType == WeaponType.HandGun)
+                    {
+                        _weaponCs.FullAutoShot();
+                    }
+                    else
+                    {
+                        _weaponCs.EnhancedFullAutoShot(fireInterval, damagePrd);
+                    }
                 }
 
 
@@ -264,9 +292,17 @@ public class PlayerWeaponController : MonoBehaviour
                 float reloadInterval = _stageManagerCs.GetReloadIntervalProduct(weaponType);
                 //強化後マガジンサイズ取得
                 int maxMagazineSize = _weaponCs._weaponData._magazineSize + _stageManagerCs.GetMagazineSizeSum(weaponType);
-                if (EnhancedTryReload(weaponType,maxMagazineSize))
+
+                if(weaponType == WeaponType.HandGun)
                 {
-                    _weaponCs.EnhanceReload(reloadInterval,EnhancedReturnNeedAmmo(weaponType, maxMagazineSize));
+                    if (TryReload())
+                    {
+                        _weaponCs.Reload(ReturnNeedAmmo());
+                    }
+                }
+                else if (EnhancedTryReload(weaponType, maxMagazineSize))
+                {
+                    _weaponCs.EnhanceReload(reloadInterval, EnhancedReturnNeedAmmo(weaponType, maxMagazineSize));
                 }
             }
             //コントローラー入力
@@ -278,7 +314,15 @@ public class PlayerWeaponController : MonoBehaviour
                 float reloadInterval = _stageManagerCs.GetReloadIntervalProduct(weaponType);
                 //強化後マガジンサイズ取得
                 int maxMagazineSize = _weaponCs._weaponData._magazineSize + _stageManagerCs.GetMagazineSizeSum(weaponType);
-                if (EnhancedTryReload(weaponType, maxMagazineSize))
+
+                if (weaponType == WeaponType.HandGun)
+                {
+                    if (TryReload())
+                    {
+                        _weaponCs.Reload(ReturnNeedAmmo());
+                    }
+                }
+                else if (EnhancedTryReload(weaponType, maxMagazineSize))
                 {
                     _weaponCs.EnhanceReload(reloadInterval, EnhancedReturnNeedAmmo(weaponType, maxMagazineSize));
                 }
@@ -384,16 +428,22 @@ public class PlayerWeaponController : MonoBehaviour
         }
         //武器種を取得
         WeaponType weaponType = _weaponCs._weaponData._weaponType;
+        if (_weaponCs._currentMagazineAmmo >= _weaponCs._weaponData._magazineSize)
+        {
+            Debug.Log("マガジンが満タン");
+            return false;
+        }
+        //ハンドガンであれば予備弾薬必要なし
+        if(weaponType == WeaponType.HandGun)
+        {
+            return true;
+        }
         if (_reserveAmmoDic[weaponType] <= 0)
         {
             Debug.Log("予備弾薬無し");
             return false;
         }
-        if(_weaponCs._currentMagazineAmmo >= _weaponCs._weaponData._magazineSize)
-        {
-            Debug.Log("マガジンが満タン");
-            return false;
-        }
+
         return true;
         
     }
@@ -416,6 +466,11 @@ public class PlayerWeaponController : MonoBehaviour
 
         //必要弾薬数取得
         int needAmmo = _weaponCs._weaponData._magazineSize - _weaponCs._currentMagazineAmmo;
+        //ハンドガンであれば予備弾薬関係なし
+        if(weaponType == WeaponType.HandGun)
+        {
+            return needAmmo;
+        }
         // 実際に補充できる弾数
         int addAmmo = Mathf.Min(needAmmo,_reserveAmmoDic[weaponType]);
 

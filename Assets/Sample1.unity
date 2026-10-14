@@ -287,6 +287,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01f9d57235c1726469ae9fe8f9462ef6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StageManager
+  _magazineSizeSum: 1e0000001e0000001e0000001e000000
+  _fireIntervalProduct:
+  - 0.9
+  - 0.9
+  - 0.9
+  - 0.9
+  _reloadIntervalProduct:
+  - 0.9
+  - 0.9
+  - 0.9
+  - 0.9
+  _damageProduct:
+  - 1.1
+  - 1.1
+  - 1.1
+  - 1.1
+  _spreadAngleProduct:
+  - 0
+  - 0
+  - 0
+  - 0
 --- !u!4 &242611973
 Transform:
   m_ObjectHideFlags: 0

@@ -3,6 +3,6 @@ using UnityEngine;
 
     public enum WeaponType
     {
-        SMG,ShotGun,AR,Sniper,
+        SMG,ShotGun,AR,Sniper,HandGun,
     }
 
