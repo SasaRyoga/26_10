@@ -99,6 +99,7 @@ public class Weapon : MonoBehaviour
         //マガジン０なら撃てない
         if(_currentMagazineAmmo <= 0)
         {
+            Debug.Log("マガジン0");
             return;
         }
         //射撃インターバル開始
@@ -125,6 +126,7 @@ public class Weapon : MonoBehaviour
 
     public void Reload(int addAmmo)
     {
+        Debug.Log("リロード開始");
         //リロードインターバル開始
         _reloadIntervalTimer = _weaponData._reloadTime;
 
@@ -134,6 +136,7 @@ public class Weapon : MonoBehaviour
     }
     public void EnhanceReload(float reloadTime, int addAmmo)
     {
+        Debug.Log("リロード開始");
         //リロードインターバル開始
         _reloadIntervalTimer = _weaponData._reloadTime * reloadTime;
 
@@ -150,6 +153,7 @@ public class Weapon : MonoBehaviour
         //マガジン０なら撃てない
         if (_currentMagazineAmmo <= 0)
         {
+            Debug.Log("マガジン0");
             return;
         }
         //射撃インターバル開始
@@ -184,6 +188,7 @@ public class Weapon : MonoBehaviour
         //マガジン０なら撃てない
         if (_currentMagazineAmmo <= 0)
         {
+            Debug.Log("マガジン0");
             return;
         }
         //射撃インターバル開始
