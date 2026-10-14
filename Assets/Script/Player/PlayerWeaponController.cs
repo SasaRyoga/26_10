@@ -214,10 +214,16 @@ public class PlayerWeaponController : MonoBehaviour
             {
                 //装備中の武器タイプ取得
                 WeaponType weaponType = _weaponCs._weaponData._weaponType;
-                //ダメージ倍率取得
-                float damagePrd = _stageManagerCs.GetDamageProduct(weaponType);
-                //射撃間隔取得
-                float fireInterval = _stageManagerCs.GetFireIntervalProduct(weaponType);
+                float damagePrd = default;
+                float fireInterval = default;
+                //装備武器がハンドガンではないとき
+                if(weaponType != WeaponType.HandGun)
+                {
+                    //ダメージ倍率取得
+                    damagePrd = _stageManagerCs.GetDamageProduct(weaponType);
+                    //射撃間隔取得
+                    fireInterval = _stageManagerCs.GetFireIntervalProduct(weaponType);
+                }
 
                 //キーボード入力
                 if (Input.GetKeyDown(KeyCode.Mouse0))
@@ -249,11 +255,16 @@ public class PlayerWeaponController : MonoBehaviour
             {
                 //装備中の武器タイプ取得
                 WeaponType weaponType = _weaponCs._weaponData._weaponType;
-                //ダメージ倍率取得
-                float damagePrd = _stageManagerCs.GetDamageProduct(weaponType);
-                //射撃間隔取得
-                float fireInterval = _stageManagerCs.GetFireIntervalProduct(weaponType);
-
+                float damagePrd = default;
+                float fireInterval = default;
+                //装備武器がハンドガンではないとき
+                if (weaponType != WeaponType.HandGun)
+                {
+                    //ダメージ倍率取得
+                    damagePrd = _stageManagerCs.GetDamageProduct(weaponType);
+                    //射撃間隔取得
+                    fireInterval = _stageManagerCs.GetFireIntervalProduct(weaponType);
+                }
                 //キーボード入力
                 if (Input.GetKey(KeyCode.Mouse0))
                 {
@@ -288,11 +299,16 @@ public class PlayerWeaponController : MonoBehaviour
             {
                 //装備中の武器タイプ取得
                 WeaponType weaponType = _weaponCs._weaponData._weaponType;
-                //リロード短縮倍率取得
-                float reloadInterval = _stageManagerCs.GetReloadIntervalProduct(weaponType);
-                //強化後マガジンサイズ取得
-                int maxMagazineSize = _weaponCs._weaponData._magazineSize + _stageManagerCs.GetMagazineSizeSum(weaponType);
-
+                float reloadInterval = default;
+                int maxMagazineSize = default;
+                //装備武器がハンドガンではないとき
+                if (weaponType != WeaponType.HandGun)
+                {
+                    //リロード短縮倍率取得
+                    reloadInterval = _stageManagerCs.GetReloadIntervalProduct(weaponType);
+                    //強化後マガジンサイズ取得
+                    maxMagazineSize = _weaponCs._weaponData._magazineSize + _stageManagerCs.GetMagazineSizeSum(weaponType);
+                }
                 if(weaponType == WeaponType.HandGun)
                 {
                     if (TryReload())
@@ -310,11 +326,16 @@ public class PlayerWeaponController : MonoBehaviour
             {
                 //装備中の武器タイプ取得
                 WeaponType weaponType = _weaponCs._weaponData._weaponType;
-                //リロード短縮倍率取得
-                float reloadInterval = _stageManagerCs.GetReloadIntervalProduct(weaponType);
-                //強化後マガジンサイズ取得
-                int maxMagazineSize = _weaponCs._weaponData._magazineSize + _stageManagerCs.GetMagazineSizeSum(weaponType);
-
+                float reloadInterval = default;
+                int maxMagazineSize = default;
+                //装備武器がハンドガンではないとき
+                if (weaponType != WeaponType.HandGun)
+                {
+                    //リロード短縮倍率取得
+                    reloadInterval = _stageManagerCs.GetReloadIntervalProduct(weaponType);
+                    //強化後マガジンサイズ取得
+                    maxMagazineSize = _weaponCs._weaponData._magazineSize + _stageManagerCs.GetMagazineSizeSum(weaponType);
+                }
                 if (weaponType == WeaponType.HandGun)
                 {
                     if (TryReload())

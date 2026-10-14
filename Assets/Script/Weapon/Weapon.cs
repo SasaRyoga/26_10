@@ -46,6 +46,8 @@ public class Weapon : MonoBehaviour
                 _currentMagazineAmmo += _pendingReloadAmmo;
 
                 Debug.Log("リロード完了");
+                Debug.Log($"リロード完了: {gameObject.name}, " +
+          $"補充弾数={_pendingReloadAmmo}");
 
                 // 補充予定の弾数をリセット
                 _pendingReloadAmmo = 0;
