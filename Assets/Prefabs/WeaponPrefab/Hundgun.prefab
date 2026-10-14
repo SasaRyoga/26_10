@@ -49,6 +49,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Weapon
   _weaponData: {fileID: 11400000, guid: 58f012f429b8f994d8bd44a2a7b0423f, type: 2}
   _currentMagazineAmmo: 0
+  _fireIntervalTimer: 0
+  _reloadIntervalTimer: 0
 --- !u!33 &2210721606743889871
 MeshFilter:
   m_ObjectHideFlags: 0
