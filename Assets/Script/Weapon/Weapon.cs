@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UniRx;
 
 public class Weapon : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class Weapon : MonoBehaviour
 
     //マガジン残段数
     public int _currentMagazineAmmo;
+    public ReactiveProperty<int> _currentMagazineAmmo2 = new ReactiveProperty<int>(0);
     int _pendingReloadAmmo;
 
     public float _fireIntervalTimer = 0;
@@ -18,6 +20,7 @@ public class Weapon : MonoBehaviour
     {
         // マガジンを最大弾数で初期化
         _currentMagazineAmmo = _weaponData._magazineSize;
+        _currentMagazineAmmo2.Value = _weaponData._magazineSize;
     }
 
     void Start()
@@ -48,6 +51,8 @@ public class Weapon : MonoBehaviour
 
                 // マガジンに弾薬を補充
                 _currentMagazineAmmo += _pendingReloadAmmo;
+                _currentMagazineAmmo2.Value += _pendingReloadAmmo;
+                
 
                 Debug.Log("リロード完了");
                 Debug.Log($"リロード完了: {gameObject.name}, " +
@@ -80,6 +85,7 @@ public class Weapon : MonoBehaviour
 
         //弾消費
         _currentMagazineAmmo--;
+        _currentMagazineAmmo2.Value--;
 
         //ここから発射処理
 
@@ -113,6 +119,7 @@ public class Weapon : MonoBehaviour
 
         //弾消費
         _currentMagazineAmmo--;
+        _currentMagazineAmmo2.Value--;
 
         //ここから発射処理
 
@@ -167,6 +174,7 @@ public class Weapon : MonoBehaviour
 
         //弾消費
         _currentMagazineAmmo--;
+        _currentMagazineAmmo2.Value--;
 
         //ここから発射処理
 
@@ -202,6 +210,7 @@ public class Weapon : MonoBehaviour
 
         //弾消費
         _currentMagazineAmmo--;
+        _currentMagazineAmmo2.Value--;
 
         //ここから発射処理
 
