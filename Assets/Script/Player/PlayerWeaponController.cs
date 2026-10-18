@@ -202,21 +202,28 @@ public class PlayerWeaponController : MonoBehaviour
             //コントローラー入力
             if (Gamepad.current != null && Gamepad.current.leftShoulder.wasPressedThisFrame)
             {
+
                 if (_weaponSlot[0] != null && _weaponSlot[1] != null)
                 {
-                    _currentSlotIndex--;
-                    CurrentSlotIndex.Value--;
+                    //_currentSlotIndex--;
+                    //CurrentSlotIndex.Value--;
+                    _currentSlotIndex = (_currentSlotIndex - 1 + 3) % 3;
+                    CurrentSlotIndex.Value = (CurrentSlotIndex.Value - 1 + 3) % 3;
+
                 }
-                if (_weaponSlot[1] == null)
+                if (_weaponSlot[1] == null && _weaponSlot[0] != null)
                 {
-                    _currentSlotIndex = 1;
-                    CurrentSlotIndex.Value = 1;
+                    _currentSlotIndex = 0;
+                    CurrentSlotIndex.Value = 0;
                 }
             }
             if (Gamepad.current != null && Gamepad.current.rightShoulder.wasPressedThisFrame)
             {
-                _currentSlotIndex++;
-                CurrentSlotIndex.Value++;
+                
+                //_currentSlotIndex++;
+                //CurrentSlotIndex.Value++;
+                _currentSlotIndex = (_currentSlotIndex + 1) % 3;
+                CurrentSlotIndex.Value = (CurrentSlotIndex.Value + 1) % 3;
                 if (_weaponSlot[1] == null)
                 {
                     _currentSlotIndex = 2;
