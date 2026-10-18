@@ -25,3 +25,4 @@ MonoBehaviour:
   _bulletPrefab: {fileID: 0}
   _weaponPrefab: {fileID: 0}
   _weaponName: AR_a
+  _weaponIcon: {fileID: 21300000, guid: 6daa3f6a352f79145aefc2d43a4c5f9b, type: 3}

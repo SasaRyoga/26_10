@@ -25,3 +25,4 @@ MonoBehaviour:
   _bulletPrefab: {fileID: 0}
   _weaponPrefab: {fileID: 0}
   _weaponName: SubM_a
+  _weaponIcon: {fileID: 21300000, guid: 6a6fef4c20bf4e240ba15b77f4651904, type: 3}
