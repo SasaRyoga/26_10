@@ -25,4 +25,5 @@ public class WeaponData : ScriptableObject
     public GameObject _weaponPrefab;
     [Header("WaeponName")]
     public string _weaponName;
+    public Sprite _weaponIcon;
 }

@@ -4,7 +4,7 @@ using UniRx;
 public class WeaponSlotUIData
 {
     /// <summary>武器を所持しているか：初期値 False</summary>
-    public ReactiveProperty<bool> _isHasWeapon = new ReactiveProperty<bool>(false);
+    public ReactiveProperty<bool> _HasWeapon = new ReactiveProperty<bool>(false);
     /// <summary>アイコン</summary>
     public ReactiveProperty<Sprite> _Icon = new ReactiveProperty<Sprite>(null);
     /// <summary>名前</summary>

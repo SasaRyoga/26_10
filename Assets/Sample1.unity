@@ -287,27 +287,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01f9d57235c1726469ae9fe8f9462ef6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StageManager
-  _magazineSizeSum: 1e0000001e0000001e0000001e000000
+  _magazineSizeSum: 00000000000000000000000000000000
   _fireIntervalProduct:
-  - 0.9
-  - 0.9
-  - 0.9
-  - 0.9
+  - 1
+  - 1
+  - 1
+  - 1
   _reloadIntervalProduct:
-  - 0.9
-  - 0.9
-  - 0.9
-  - 0.9
+  - 1
+  - 1
+  - 1
+  - 1
   _damageProduct:
-  - 1.1
-  - 1.1
-  - 1.1
-  - 1.1
+  - 1
+  - 1
+  - 1
+  - 1
   _spreadAngleProduct:
-  - 0
-  - 0
-  - 0
-  - 0
+  - 1
+  - 1
+  - 1
+  - 1
 --- !u!4 &242611973
 Transform:
   m_ObjectHideFlags: 0
@@ -332,6 +332,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 245481778}
+  - component: {fileID: 245481783}
   - component: {fileID: 245481780}
   - component: {fileID: 245481781}
   - component: {fileID: 245481782}
@@ -514,9 +515,25 @@ MonoBehaviour:
   _currenIndexText: {fileID: 0}
   _maxAmmo: c8000000c8000000c8000000c8000000
   _ammo: c8000000c8000000c8000000c8000000
+  _weaponUIControllerCs: {fileID: 245481783}
   WeaponSlotName: []
   CurrentSlotIndex:
     value: 0
+--- !u!114 &245481783
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 245481774}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4941b98cb638dc84f8858baf4d2c4c02, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponUIController
+  _weaponControllerCs: {fileID: 245481782}
+  CurrentSlotIndex:
+    value: 2
 --- !u!1 &457639491
 GameObject:
   m_ObjectHideFlags: 0
