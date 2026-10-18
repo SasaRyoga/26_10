@@ -4,6 +4,7 @@ using UniRx;
 
 public class WeaponSlotUI : MonoBehaviour
 {
+    [SerializeField]    Text _reloadTime;
     [SerializeField]    Text _slotIndex;
     [SerializeField]    Sprite _nonSprite;
     [SerializeField]    Image[] _slotImage = new Image[3];
@@ -17,7 +18,7 @@ public class WeaponSlotUI : MonoBehaviour
     void Start()
     {
         _weaponUIControllerCs.CurrentSlotIndex.Subscribe(x =>  IndexSlot(x));
-
+        
       for(int i = 0; i < 3; i++)
         {
             int index = i;
@@ -40,9 +41,14 @@ public class WeaponSlotUI : MonoBehaviour
 
             weaponSlotUIDatas[index]._MaxMagazine.Subscribe(x => _magazineSize[index].text = x.ToString()).AddTo(this);
 
-
+            weaponSlotUIDatas[index]._CurrentReloadTime.Subscribe(x => ReloadStart(index, x)).AddTo(this);
             
         }
+    }
+
+    void ReloadStart(int index, float currentreloadTime)
+    {
+        _reloadTime.text = currentreloadTime.ToString("0.0");
     }
 
     void IndexSlot(int x)

@@ -49,10 +49,12 @@ public class PlayerWeaponController : MonoBehaviour
     Vector3 _dropPosition;
     //購買解除用
     IDisposable _magazineAmmoSubscription;
+    IDisposable _reloadSubscription;
     void SubscribeMagazineAmmo(int index)
     {
         //直前の購買を解除
         _magazineAmmoSubscription?.Dispose();
+        _reloadSubscription?.Dispose();
         //武器がなければ終了
         if (_weaponSlot[index] == null)
             return;
@@ -61,6 +63,9 @@ public class PlayerWeaponController : MonoBehaviour
         //新しい武器の残段数を購読
         _magazineAmmoSubscription =
             weapon._currentMagazineAmmo2.Subscribe(x => _weaponUIControllerCs.UpdataCurrentMagazine(index, x));
+        //新しい武器の残りリロード時間を購読
+        _reloadSubscription =
+            weapon._reloadIntervalTimer2.Subscribe(x => _weaponUIControllerCs.UpdataReload(index, x));
 
     }
     private void Awake()
@@ -144,6 +149,7 @@ public class PlayerWeaponController : MonoBehaviour
             {
                 // 空のスロットに切り替えた場合も解除する
                 _magazineAmmoSubscription?.Dispose();
+                _reloadSubscription?.Dispose();
                 _weaponCs = null;
             }
         })
