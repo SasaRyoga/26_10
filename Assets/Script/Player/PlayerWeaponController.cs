@@ -16,6 +16,7 @@ public class PlayerWeaponController : MonoBehaviour
     [SerializeField]    int[] _maxAmmo = new int[4];
     [Header("予備弾薬所持数")]
     [SerializeField] int[] _ammo = new int[4];
+    [SerializeField]    WeaponUIController _weaponUIControllerCs;
 
     // 武器種ごとの予備弾薬の最大所持数
     Dictionary<WeaponType, int> _maxReserveAmmoDic =
@@ -33,6 +34,7 @@ public class PlayerWeaponController : MonoBehaviour
 
     //装備中のスロット番号
     int _currentSlotIndex = 0;
+    /// <summary>装備中のインデックス</summary>
     public ReactiveProperty<int> CurrentSlotIndex = new ReactiveProperty<int>(2);
     //装備中の武器のWeapon.cs
     Weapon _weaponCs;
@@ -48,25 +50,61 @@ public class PlayerWeaponController : MonoBehaviour
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
 
+        Initialization();
+
+    }
+    void Initialization()
+    {
+        _weaponSlot[2] = _handgunPrefab;
+        WeaponSlotName[2].Value = "HandGun";
         //インスペクターからの設定をDictionaryに適応
-        for(int i = 0; i < _maxAmmo.Length; i++)
+        for (int i = 0; i < _maxAmmo.Length; i++)
         {
             WeaponType type = (WeaponType)i;
             _maxReserveAmmoDic[type] = _maxAmmo[i];
             _reserveAmmoDic[type] = _ammo[i];
         }
+        _weaponUIControllerCs.Initialization();
+        //StageManagerを取得
+        _stageManagerObj = GameObject.FindGameObjectWithTag("StageManager");
+        _stageManagerCs = _stageManagerObj?.GetComponent<StageManager>();
+        //スロット1,2,3UIを更新
+        for (int i = 0; i < 3; i++)
+        {
+            Weapon weapon = null;
+
+            if (_weaponSlot[i] != null)
+            {
+                weapon = _weaponSlot[i].GetComponent<Weapon>();
+            }
+
+            UpdateWeaponSlotUIData(i);
+        }
     }
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        //StageManagerを取得
         _stageManagerObj = GameObject.FindGameObjectWithTag("StageManager");
         _stageManagerCs = _stageManagerObj?.GetComponent<StageManager>();
+        //シーン開始時はスロット３を装備
         _currentSlotIndex = 2;
         CurrentSlotIndex.Value = 2;
+        //スロット1,2,3UIを更新
+        for (int i = 0; i < 3; i++)
+        {
+            Weapon weapon = null;
+
+            if (_weaponSlot[i] != null)
+            {
+                weapon = _weaponSlot[i].GetComponent<Weapon>();
+            }
+
+            UpdateWeaponSlotUIData(i);
+        }
     }
     void Start()
     {
-        _weaponSlot[2] = _handgunPrefab;
-        WeaponSlotName[2].Value = "HandGun";
+
         CurrentSlotIndex.Subscribe(index =>
         {
             _currentSlotIndex = index;
@@ -353,23 +391,57 @@ public class PlayerWeaponController : MonoBehaviour
         }
 
     }
+    public void UpdateWeaponSlotUIData(int index)
+    {
+        // 空のスロットもUI更新できるようにする
+        if (_weaponSlot[index] == null)
+        {
+            _weaponUIControllerCs.UpdateWeaponSlotUIData(
+                index, null, 0, 0);
+            return;
+        }
+
+        Weapon weaponCs = _weaponSlot[index].GetComponent<Weapon>();
+        WeaponData weaponData = weaponCs._weaponData;
+        WeaponType weaponType = weaponData._weaponType;
+
+        int maxMagazineSize = weaponData._magazineSize;
+        float reloadTime = weaponData._reloadTime;
+
+        // ハンドガン以外は強化値を反映
+        if (_stageManagerCs != null &&
+            weaponType != WeaponType.HandGun)
+        {
+            maxMagazineSize +=
+                _stageManagerCs.GetMagazineSizeSum(weaponType);
+
+            reloadTime *=
+                _stageManagerCs.GetReloadIntervalProduct(weaponType);
+        }
+
+        _weaponUIControllerCs.UpdateWeaponSlotUIData(
+            index, weaponCs, maxMagazineSize, reloadTime);
+    }
     void PickUpWeapon()
     {
-        //スロット１と２が空いていれば
+        //スロット１と２が空いていればスロット１へ装備
         if (_weaponSlot[0] == null && _weaponSlot[1] == null)
         {
             _weaponSlot[0] = _nearByWeapon;
             WeaponSlotName[0].Value = _weaponSlot[0].GetComponent<Weapon>()?._weaponData._weaponName;
             PickUpWeaponOut(_weaponSlot[0], 0);
+            //スロット１のUI更新
+            UpdateWeaponSlotUIData(0);
             return;
         }
-        //スロット２だけ空いていれば
+        //スロット２だけ空いていればスロット２へ装備
         if (_weaponSlot[0] != null && _weaponSlot[1] == null)
         {
             _weaponSlot[1] = _nearByWeapon;
             WeaponSlotName[1].Value = _weaponSlot[1].GetComponent<Weapon>()?._weaponData._weaponName;
-
             PickUpWeaponOut(_weaponSlot[1], 1);
+            //スロット２のUI更新
+            UpdateWeaponSlotUIData(1);
             return;
         }
         //スロットが空いていなければ交換
@@ -385,6 +457,8 @@ public class PlayerWeaponController : MonoBehaviour
 
                 PickUpWeaponOut(_weaponSlot[1], 1);
                 _nearByWeapon = null;
+                //スロット2のUI更新
+                UpdateWeaponSlotUIData(1);
                 return;
             }
             else
@@ -397,6 +471,8 @@ public class PlayerWeaponController : MonoBehaviour
                 Debug.Log("Weapon.cs取得");
                 PickUpWeaponOut(_weaponSlot[_currentSlotIndex], _currentSlotIndex);
                 _nearByWeapon = null;
+                //スロット１か２のUI更新
+                UpdateWeaponSlotUIData(_currentSlotIndex);
                 return;
             }
         }

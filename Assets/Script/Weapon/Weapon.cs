@@ -14,11 +14,15 @@ public class Weapon : MonoBehaviour
 
     public float _fireIntervalTimer = 0;
     public float _reloadIntervalTimer = 0;
-
-    void Start()
+    private void Awake()
     {
         // マガジンを最大弾数で初期化
         _currentMagazineAmmo = _weaponData._magazineSize;
+    }
+
+    void Start()
+    {
+
     }
     private void Update()
     {
