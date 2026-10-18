@@ -24,3 +24,4 @@ MonoBehaviour:
   _reloadTime: 3
   _bulletPrefab: {fileID: 0}
   _weaponPrefab: {fileID: 0}
+  _weaponName: Sniper_b

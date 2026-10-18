@@ -24,3 +24,4 @@ MonoBehaviour:
   _reloadTime: 2.2
   _bulletPrefab: {fileID: 0}
   _weaponPrefab: {fileID: 0}
+  _weaponName: Shotgun_b

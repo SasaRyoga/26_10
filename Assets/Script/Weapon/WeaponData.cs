@@ -23,4 +23,6 @@ public class WeaponData : ScriptableObject
 
     public GameObject _bulletPrefab;
     public GameObject _weaponPrefab;
+    [Header("WaeponName")]
+    public string _weaponName;
 }

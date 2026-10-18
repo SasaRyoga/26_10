@@ -28,10 +28,11 @@ public class PlayerWeaponController : MonoBehaviour
     GameObject[] _weaponSlot = new GameObject[3];
     GameObject _stageManagerObj;
     StageManager _stageManagerCs;
+    //所持中の武器名
+    public ReactiveProperty<string>[] WeaponSlotName;
 
     //装備中のスロット番号
     int _currentSlotIndex = 0;
-
     public ReactiveProperty<int> CurrentSlotIndex = new ReactiveProperty<int>(2);
     //装備中の武器のWeapon.cs
     Weapon _weaponCs;
@@ -65,6 +66,7 @@ public class PlayerWeaponController : MonoBehaviour
     void Start()
     {
         _weaponSlot[2] = _handgunPrefab;
+        WeaponSlotName[2].Value = "HandGun";
         CurrentSlotIndex.Subscribe(index =>
         {
             _currentSlotIndex = index;
@@ -357,6 +359,7 @@ public class PlayerWeaponController : MonoBehaviour
         if (_weaponSlot[0] == null && _weaponSlot[1] == null)
         {
             _weaponSlot[0] = _nearByWeapon;
+            WeaponSlotName[0].Value = _weaponSlot[0].GetComponent<Weapon>()?._weaponData._weaponName;
             PickUpWeaponOut(_weaponSlot[0], 0);
             return;
         }
@@ -364,6 +367,8 @@ public class PlayerWeaponController : MonoBehaviour
         if (_weaponSlot[0] != null && _weaponSlot[1] == null)
         {
             _weaponSlot[1] = _nearByWeapon;
+            WeaponSlotName[1].Value = _weaponSlot[1].GetComponent<Weapon>()?._weaponData._weaponName;
+
             PickUpWeaponOut(_weaponSlot[1], 1);
             return;
         }
@@ -376,6 +381,8 @@ public class PlayerWeaponController : MonoBehaviour
             {
                 PickUpWeaponIn(_weaponSlot[1], _dropPosition);
                 _weaponSlot[1] = _nearByWeapon;
+                WeaponSlotName[1].Value = _weaponSlot[1].GetComponent<Weapon>()?._weaponData._weaponName;
+
                 PickUpWeaponOut(_weaponSlot[1], 1);
                 _nearByWeapon = null;
                 return;
@@ -385,6 +392,8 @@ public class PlayerWeaponController : MonoBehaviour
                 PickUpWeaponIn(_weaponSlot[_currentSlotIndex], _dropPosition);
                 _weaponSlot[_currentSlotIndex] = _nearByWeapon;
                 _weaponCs = _nearByWeapon.GetComponent<Weapon>();
+                WeaponSlotName[_currentSlotIndex].Value = _weaponCs._weaponData._weaponName;
+
                 Debug.Log("Weapon.cs取得");
                 PickUpWeaponOut(_weaponSlot[_currentSlotIndex], _currentSlotIndex);
                 _nearByWeapon = null;

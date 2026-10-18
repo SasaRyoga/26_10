@@ -24,3 +24,4 @@ MonoBehaviour:
   _reloadTime: 1.8
   _bulletPrefab: {fileID: 0}
   _weaponPrefab: {fileID: 0}
+  _weaponName: SubM_b
