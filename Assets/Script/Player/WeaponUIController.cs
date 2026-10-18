@@ -31,6 +31,10 @@ public class WeaponUIController : MonoBehaviour
     {
         _weaponSlotUIDatas[index]._CurrentMagazine.Value = currentmagazine;
     }
+    public void UpdataReload(int index, float reloadTime)
+    {
+        _weaponSlotUIDatas[index]._CurrentReloadTime.Value = reloadTime;
+    }
     /// <summary>指定したスロットの武器情報を更新する</summary>
     public void UpdateWeaponSlotUIData(int index, Weapon weapon, int maxMagazinSize, float maxReloadTime)
     {

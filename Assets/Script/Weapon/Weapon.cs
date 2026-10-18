@@ -12,6 +12,7 @@ public class Weapon : MonoBehaviour
     //マガジン残段数
     public int _currentMagazineAmmo;
     public ReactiveProperty<int> _currentMagazineAmmo2 = new ReactiveProperty<int>(0);
+    public ReactiveProperty<float> _reloadIntervalTimer2 = new ReactiveProperty<float>(0);
     int _pendingReloadAmmo;
 
     public float _fireIntervalTimer = 0;
@@ -43,12 +44,13 @@ public class Weapon : MonoBehaviour
         if (_reloadIntervalTimer > 0)
         {
             _reloadIntervalTimer -= Time.deltaTime;
-
+            _reloadIntervalTimer2.Value =
+                Mathf.Max(0f, _reloadIntervalTimer);
             // リロード時間が終了した
             if (_reloadIntervalTimer <= 0)
             {
                 _reloadIntervalTimer = 0;
-
+                _reloadIntervalTimer2.Value = 0;
                 // マガジンに弾薬を補充
                 _currentMagazineAmmo += _pendingReloadAmmo;
                 _currentMagazineAmmo2.Value += _pendingReloadAmmo;
@@ -66,8 +68,14 @@ public class Weapon : MonoBehaviour
 
     public void FullAutoShot()
     {
-        //射撃間隔中なら撃てない
-        if (_fireIntervalTimer > 0)
+        //リロード中なら撃てない
+        if (_reloadIntervalTimer > 0)
+        {
+            Debug.Log("リロード中は射撃不可");
+            return;
+        }
+            //射撃間隔中なら撃てない
+            if (_fireIntervalTimer > 0)
         {
             Debug.Log("射撃インターバル中");
             Debug.Log(_fireIntervalTimer);
@@ -103,8 +111,14 @@ public class Weapon : MonoBehaviour
     }
     public void SemiAutoShot()
     {
+        //リロード中なら撃てない
+        if (_reloadIntervalTimer > 0)
+        {
+            Debug.Log("リロード中は射撃不可");
+            return;
+        }
         //射撃間隔中なら撃てない
-        if(_fireIntervalTimer > 0)
+        if (_fireIntervalTimer > 0)
         {
             return;
         }
@@ -142,7 +156,7 @@ public class Weapon : MonoBehaviour
         Debug.Log("リロード開始");
         //リロードインターバル開始
         _reloadIntervalTimer = _weaponData._reloadTime;
-
+        _reloadIntervalTimer2.Value = _reloadIntervalTimer;
         // 補充予定の弾数を保存
         _pendingReloadAmmo = addAmmo;
 
@@ -152,12 +166,18 @@ public class Weapon : MonoBehaviour
         Debug.Log("リロード開始");
         //リロードインターバル開始
         _reloadIntervalTimer = _weaponData._reloadTime * reloadTime;
-
+        _reloadIntervalTimer2.Value = _reloadIntervalTimer;
         //補充予定の段数を保存
         _pendingReloadAmmo = addAmmo;
     }
     public void EnhancedSemiAutoShot(float fireInterval, float damage)
     {
+        //リロード中なら撃てない
+        if (_reloadIntervalTimer > 0)
+        {
+            Debug.Log("リロード中は射撃不可");
+            return;
+        }
         //射撃間隔中なら撃てない
         if (_fireIntervalTimer > 0)
         {
@@ -194,6 +214,12 @@ public class Weapon : MonoBehaviour
     }
     public void EnhancedFullAutoShot(float fireInterval, float damage)
     {
+        //リロード中なら撃てない
+        if (_reloadIntervalTimer > 0)
+        {
+            Debug.Log("リロード中は射撃不可");
+            return;
+        }
         //射撃間隔中なら撃てない
         if (_fireIntervalTimer > 0)
         {
