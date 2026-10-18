@@ -4,6 +4,7 @@ using UniRx;
 
 public class WeaponSlotUI : MonoBehaviour
 {
+    [SerializeField]    Image _reloadGage;
     [SerializeField]    Text _reloadTime;
     [SerializeField]    Text _slotIndex;
     [SerializeField]    Sprite _nonSprite;
@@ -46,13 +47,27 @@ public class WeaponSlotUI : MonoBehaviour
         }
     }
 
-    void ReloadStart(int index, float currentreloadTime)
+    void ReloadStart(int index, float currentReloadTime)
     {
-        _reloadTime.text = currentreloadTime.ToString("0.0");
+        if (index != _currentSlotIndex)
+            return;
+
+        float maxReloadTime =
+            _weaponUIControllerCs
+            ._weaponSlotUIDatas[index]
+            ._MaxReloadTime.Value;
+
+        _reloadGage.fillAmount =
+            maxReloadTime > 0f
+            ? Mathf.Clamp01(currentReloadTime / maxReloadTime)
+            : 0f;
+
+        _reloadTime.text = currentReloadTime.ToString("0.0");
     }
 
     void IndexSlot(int x)
     {
+        _currentSlotIndex = x;
         _slotIndex.text = $"{x + 1}" ;
     }
 }
