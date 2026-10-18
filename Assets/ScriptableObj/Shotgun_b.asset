@@ -25,3 +25,4 @@ MonoBehaviour:
   _bulletPrefab: {fileID: 0}
   _weaponPrefab: {fileID: 0}
   _weaponName: Shotgun_b
+  _weaponIcon: {fileID: 21300000, guid: 2f47926d58070d44a835264db628f60e, type: 3}

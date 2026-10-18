@@ -55,6 +55,13 @@ public class PlayerWeaponController : MonoBehaviour
     }
     void Initialization()
     {
+        // 武器名を管理する配列を初期化
+        WeaponSlotName = new ReactiveProperty<string>[3];
+
+        for (int i = 0; i < WeaponSlotName.Length; i++)
+        {
+            WeaponSlotName[i] = new ReactiveProperty<string>("");
+        }
         _weaponSlot[2] = _handgunPrefab;
         WeaponSlotName[2].Value = "HandGun";
         //インスペクターからの設定をDictionaryに適応

@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 2034214695248355912}
   m_Layer: 0
   m_Name: AR_b
-  m_TagString: Untagged
+  m_TagString: Weapon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -49,6 +49,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Weapon
   _weaponData: {fileID: 11400000, guid: ab4f0c8998e8d4d4883e6648e6aafe9f, type: 2}
   _currentMagazineAmmo: 0
+  _fireIntervalTimer: 0
+  _reloadIntervalTimer: 0
 --- !u!33 &959010177282140148
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -121,9 +123,9 @@ SphereCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.5
+  m_Radius: 1
   m_Center: {x: 0, y: 0, z: 0}
