@@ -24,7 +24,13 @@ public class WeaponUIController : MonoBehaviour
         _weaponControllerCs.CurrentSlotIndex.Subscribe(x => CurrentSlotIndex.Value = x)
             .AddTo(this);
     }
-
+    /// <summary>装備中Indexの残段数UIを更新する</summary>
+    /// <param name="index"></param>
+    /// <param name="currentmagazine"></param>
+    public void UpdataCurrentMagazine(int index, int currentmagazine)
+    {
+        _weaponSlotUIDatas[index]._CurrentMagazine.Value = currentmagazine;
+    }
     /// <summary>指定したスロットの武器情報を更新する</summary>
     public void UpdateWeaponSlotUIData(int index, Weapon weapon, int maxMagazinSize, float maxReloadTime)
     {

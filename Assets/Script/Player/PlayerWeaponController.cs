@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UniRx;
+using System;
 
 
 public class PlayerWeaponController : MonoBehaviour
@@ -13,10 +14,10 @@ public class PlayerWeaponController : MonoBehaviour
     [SerializeField] GameObject _handgunPrefab;
     [SerializeField] TextMeshProUGUI _currenIndexText;
     [Header("予備弾薬最大所持数")]
-    [SerializeField]    int[] _maxAmmo = new int[4];
+    [SerializeField] int[] _maxAmmo = new int[4];
     [Header("予備弾薬所持数")]
     [SerializeField] int[] _ammo = new int[4];
-    [SerializeField]    WeaponUIController _weaponUIControllerCs;
+    [SerializeField] WeaponUIController _weaponUIControllerCs;
 
     // 武器種ごとの予備弾薬の最大所持数
     Dictionary<WeaponType, int> _maxReserveAmmoDic =
@@ -46,6 +47,22 @@ public class PlayerWeaponController : MonoBehaviour
 
     //武器を捨てる位置
     Vector3 _dropPosition;
+    //購買解除用
+    IDisposable _magazineAmmoSubscription;
+    void SubscribeMagazineAmmo(int index)
+    {
+        //直前の購買を解除
+        _magazineAmmoSubscription?.Dispose();
+        //武器がなければ終了
+        if (_weaponSlot[index] == null)
+            return;
+        //対象の武器を取得
+        Weapon weapon = _weaponSlot[index].GetComponent<Weapon>();
+        //新しい武器の残段数を購読
+        _magazineAmmoSubscription =
+            weapon._currentMagazineAmmo2.Subscribe(x => _weaponUIControllerCs.UpdataCurrentMagazine(index, x));
+
+    }
     private void Awake()
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
@@ -120,14 +137,17 @@ public class PlayerWeaponController : MonoBehaviour
             {
                 _weaponCs =
                     _weaponSlot[index].GetComponent<Weapon>();
+                SubscribeMagazineAmmo(index);
                 Debug.Log("Weapon.cs取得");
             }
             else
             {
+                // 空のスロットに切り替えた場合も解除する
+                _magazineAmmoSubscription?.Dispose();
                 _weaponCs = null;
             }
         })
-    .AddTo(this);
+        .AddTo(this);
     }
 
     void Update()
@@ -155,7 +175,7 @@ public class PlayerWeaponController : MonoBehaviour
         //武器装備スロット切り替え
 
         //射撃中でもリロード中でもないときスロット切り替え可能
-        if(_weaponCs._fireIntervalTimer <= 0 &&_weaponCs._reloadIntervalTimer <= 0)
+        if (_weaponCs._fireIntervalTimer <= 0 && _weaponCs._reloadIntervalTimer <= 0)
         {
             //キーボード入力
             if (Input.GetKeyDown(KeyCode.Alpha1) && _weaponSlot[0] != null)
@@ -200,7 +220,7 @@ public class PlayerWeaponController : MonoBehaviour
             _currentSlotIndex = Mathf.Clamp(_currentSlotIndex, 0, 2);
             CurrentSlotIndex.Value = Mathf.Clamp(CurrentSlotIndex.Value, 0, 2);
         }
-        
+
 
 
         //強化要素がないとき
@@ -216,12 +236,12 @@ public class PlayerWeaponController : MonoBehaviour
                     _weaponCs.SemiAutoShot();
                 }
                 //コントローラー入力
-                if(Gamepad.current != null && Gamepad.current.rightTrigger.wasPressedThisFrame)
+                if (Gamepad.current != null && Gamepad.current.rightTrigger.wasPressedThisFrame)
                 {
                     _weaponCs.SemiAutoShot();
                 }
             }
-            if(_weaponCs._weaponData._fireMode == FireMode.FullAuto)
+            if (_weaponCs._weaponData._fireMode == FireMode.FullAuto)
             {
                 //キーボード入力
                 if (Input.GetKey(KeyCode.Mouse0))
@@ -245,7 +265,7 @@ public class PlayerWeaponController : MonoBehaviour
                 }
             }
             //コントローラー入力
-            if(Gamepad.current != null && Gamepad.current.buttonNorth.wasPressedThisFrame)
+            if (Gamepad.current != null && Gamepad.current.buttonNorth.wasPressedThisFrame)
             {
                 if (TryReload())
                 {
@@ -254,7 +274,7 @@ public class PlayerWeaponController : MonoBehaviour
             }
         }
         //強化要素があるとき
-        if(_stageManagerObj  != null && _weaponCs != null)
+        if (_stageManagerObj != null && _weaponCs != null)
         {
             //射撃入力　単押し
             if (_weaponCs._weaponData._fireMode == FireMode.SemiAuto)
@@ -264,7 +284,7 @@ public class PlayerWeaponController : MonoBehaviour
                 float damagePrd = default;
                 float fireInterval = default;
                 //装備武器がハンドガンではないとき
-                if(weaponType != WeaponType.HandGun)
+                if (weaponType != WeaponType.HandGun)
                 {
                     //ダメージ倍率取得
                     damagePrd = _stageManagerCs.GetDamageProduct(weaponType);
@@ -275,7 +295,7 @@ public class PlayerWeaponController : MonoBehaviour
                 //キーボード入力
                 if (Input.GetKeyDown(KeyCode.Mouse0))
                 {
-                    if(weaponType == WeaponType.HandGun)
+                    if (weaponType == WeaponType.HandGun)
                     {
                         _weaponCs.SemiAutoShot();
                     }
@@ -315,7 +335,7 @@ public class PlayerWeaponController : MonoBehaviour
                 //キーボード入力
                 if (Input.GetKey(KeyCode.Mouse0))
                 {
-                    if(weaponType == WeaponType.HandGun)
+                    if (weaponType == WeaponType.HandGun)
                     {
                         _weaponCs.FullAutoShot();
                     }
@@ -356,7 +376,7 @@ public class PlayerWeaponController : MonoBehaviour
                     //強化後マガジンサイズ取得
                     maxMagazineSize = _weaponCs._weaponData._magazineSize + _stageManagerCs.GetMagazineSizeSum(weaponType);
                 }
-                if(weaponType == WeaponType.HandGun)
+                if (weaponType == WeaponType.HandGun)
                 {
                     if (TryReload())
                     {
@@ -473,6 +493,7 @@ public class PlayerWeaponController : MonoBehaviour
                 PickUpWeaponIn(_weaponSlot[_currentSlotIndex], _dropPosition);
                 _weaponSlot[_currentSlotIndex] = _nearByWeapon;
                 _weaponCs = _nearByWeapon.GetComponent<Weapon>();
+                SubscribeMagazineAmmo(_currentSlotIndex);
                 WeaponSlotName[_currentSlotIndex].Value = _weaponCs._weaponData._weaponName;
 
                 Debug.Log("Weapon.cs取得");
@@ -547,7 +568,7 @@ public class PlayerWeaponController : MonoBehaviour
             return false;
         }
         //ハンドガンであれば予備弾薬必要なし
-        if(weaponType == WeaponType.HandGun)
+        if (weaponType == WeaponType.HandGun)
         {
             return true;
         }
@@ -558,7 +579,7 @@ public class PlayerWeaponController : MonoBehaviour
         }
 
         return true;
-        
+
     }
     int EnhancedReturnNeedAmmo(WeaponType weaponType, int maxMagazineSize)
     {
@@ -580,12 +601,12 @@ public class PlayerWeaponController : MonoBehaviour
         //必要弾薬数取得
         int needAmmo = _weaponCs._weaponData._magazineSize - _weaponCs._currentMagazineAmmo;
         //ハンドガンであれば予備弾薬関係なし
-        if(weaponType == WeaponType.HandGun)
+        if (weaponType == WeaponType.HandGun)
         {
             return needAmmo;
         }
         // 実際に補充できる弾数
-        int addAmmo = Mathf.Min(needAmmo,_reserveAmmoDic[weaponType]);
+        int addAmmo = Mathf.Min(needAmmo, _reserveAmmoDic[weaponType]);
 
         // 予備弾薬から補充予定の弾数を引く
         _reserveAmmoDic[weaponType] -= addAmmo;
