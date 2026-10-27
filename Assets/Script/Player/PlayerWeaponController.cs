@@ -470,6 +470,7 @@ public class PlayerWeaponController : MonoBehaviour
             _weaponSlot[0] = _nearByWeapon;
             WeaponSlotName[0].Value = _weaponSlot[0].GetComponent<Weapon>()?._weaponData._weaponName;
             PickUpWeaponOut(_weaponSlot[0], 0);
+
             //スロット１のUI更新
             UpdateWeaponSlotUIData(0);
             return;
@@ -480,6 +481,7 @@ public class PlayerWeaponController : MonoBehaviour
             _weaponSlot[1] = _nearByWeapon;
             WeaponSlotName[1].Value = _weaponSlot[1].GetComponent<Weapon>()?._weaponData._weaponName;
             PickUpWeaponOut(_weaponSlot[1], 1);
+
             //スロット２のUI更新
             UpdateWeaponSlotUIData(1);
             return;
@@ -491,14 +493,14 @@ public class PlayerWeaponController : MonoBehaviour
             //スロット１と交換
             if (_currentSlotIndex == 2)
             {
-                PickUpWeaponIn(_weaponSlot[1], _dropPosition);
-                _weaponSlot[1] = _nearByWeapon;
-                WeaponSlotName[1].Value = _weaponSlot[1].GetComponent<Weapon>()?._weaponData._weaponName;
+                PickUpWeaponIn(_weaponSlot[0], _dropPosition);
+                _weaponSlot[0] = _nearByWeapon;
+                WeaponSlotName[0].Value = _weaponSlot[0].GetComponent<Weapon>()?._weaponData._weaponName;
 
-                PickUpWeaponOut(_weaponSlot[1], 1);
+                PickUpWeaponOut(_weaponSlot[0], 1);
                 _nearByWeapon = null;
-                //スロット2のUI更新
-                UpdateWeaponSlotUIData(1);
+                //スロット1のUI更新
+                UpdateWeaponSlotUIData(0);
                 return;
             }
             else
@@ -512,6 +514,8 @@ public class PlayerWeaponController : MonoBehaviour
                 Debug.Log("Weapon.cs取得");
                 PickUpWeaponOut(_weaponSlot[_currentSlotIndex], _currentSlotIndex);
                 _nearByWeapon = null;
+                //新しい武器の弾数・リロード時間を購読
+                SubscribeMagazineAmmo(_currentSlotIndex);
                 //スロット１か２のUI更新
                 UpdateWeaponSlotUIData(_currentSlotIndex);
                 return;

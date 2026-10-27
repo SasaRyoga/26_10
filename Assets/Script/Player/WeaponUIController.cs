@@ -7,6 +7,9 @@ public class WeaponUIController : MonoBehaviour
         = new WeaponSlotUIData[3];
     /// <summary>装備中のインデックス </summary>
     public ReactiveProperty<int> CurrentSlotIndex = new ReactiveProperty<int>(2);
+
+    public Subject<int> OnWeaponSlotUpdated = new Subject<int>();
+
     private void Awake()
     {
 
@@ -69,7 +72,10 @@ public class WeaponUIController : MonoBehaviour
         uiData._WeaponType.Value = data._weaponType;
         uiData._CurrentMagazine.Value = weapon._currentMagazineAmmo;
         uiData._MaxMagazine.Value = maxMagazinSize;
-        uiData._CurrentReloadTime.Value = maxReloadTime;
-        uiData._MaxReloadTime.Value = data._reloadTime;
+        uiData._CurrentReloadTime.Value = weapon._reloadIntervalTimer2.Value;
+        //uiData._CurrentReloadTime.Value = data._reloadTime;
+        uiData._MaxReloadTime.Value = maxReloadTime;
+
+        OnWeaponSlotUpdated.OnNext(index);
     }
 }
