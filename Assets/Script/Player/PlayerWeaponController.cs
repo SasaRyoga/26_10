@@ -18,6 +18,7 @@ public class PlayerWeaponController : MonoBehaviour
     [Header("予備弾薬所持数")]
     [SerializeField] int[] _ammo = new int[4];
     [SerializeField] WeaponUIController _weaponUIControllerCs;
+    [SerializeField]    TopRightUI _topRightUICs;
 
     // 武器種ごとの予備弾薬の最大所持数
     Dictionary<WeaponType, int> _maxReserveAmmoDic =
@@ -109,6 +110,8 @@ public class PlayerWeaponController : MonoBehaviour
 
             UpdateWeaponSlotUIData(i);
         }
+        //右上のUIを更新
+        _topRightUICs.Initialization(_reserveAmmoDic);
     }
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
@@ -130,6 +133,8 @@ public class PlayerWeaponController : MonoBehaviour
 
             UpdateWeaponSlotUIData(i);
         }
+        //右上のUIを更新
+        _topRightUICs.Initialization(_reserveAmmoDic);
     }
     void Start()
     {
@@ -607,7 +612,8 @@ public class PlayerWeaponController : MonoBehaviour
 
         // 予備弾薬から補充予定の弾数を引く
         _reserveAmmoDic[weaponType] -= addAmmo;
-
+        //UIを更新
+        _topRightUICs.RemoveAmmo(weaponType, _reserveAmmoDic[weaponType]);
         return addAmmo;
     }
     int ReturnNeedAmmo()
@@ -628,6 +634,9 @@ public class PlayerWeaponController : MonoBehaviour
         // 予備弾薬から補充予定の弾数を引く
         _reserveAmmoDic[weaponType] -= addAmmo;
 
+        //UIを更新
+        _topRightUICs.RemoveAmmo(weaponType, _reserveAmmoDic[weaponType]);
+
         return addAmmo;
 
     }
@@ -637,6 +646,33 @@ public class PlayerWeaponController : MonoBehaviour
         {
             _nearByWeapon = other.gameObject;
         }
+        if (other.gameObject.CompareTag("Ammo"))
+        {
+            AmmoData ammoData = other.gameObject.GetComponent<Ammo>().AmmoData;
+            //所持上限を超えていれば拾えない
+            if(!TryGetAmmo(ammoData._weaponType))
+            {
+                return;
+            }
+            
+            GetAmmo(ammoData._weaponType, ammoData._ammoCount);
+            Destroy(other.gameObject);
+        }
+    }
+    void GetAmmo(WeaponType weaponType, int ammoCount)
+    {
+        //取得できる数を計算
+        int canammo = _maxReserveAmmoDic[weaponType] - _reserveAmmoDic[weaponType];
+        //実際に入れる数
+        int addammo = Mathf.Min(canammo, ammoCount);
+        //UIを更新
+        _topRightUICs.AddAmmo(weaponType, _reserveAmmoDic[weaponType], Mathf.Min(canammo, ammoCount));
+
+        _reserveAmmoDic[weaponType] += addammo;
+    }
+    bool TryGetAmmo(WeaponType weaponType)
+    {
+        return _reserveAmmoDic[weaponType] >= _maxReserveAmmoDic[weaponType] ? false : true;
     }
     private void OnTriggerExit(Collider other)
     {

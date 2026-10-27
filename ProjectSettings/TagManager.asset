@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Weapon
   - StageManager
+  - Ammo
   layers:
   - Default
   - TransparentFX
