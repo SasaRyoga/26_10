@@ -6,11 +6,14 @@ using UnityEngine.UI;
 
 public class PlayerHPController : MonoBehaviour
 {
+    [SerializeField] int _currentHealItem;
+    [SerializeField]    int _maxHealItem;
     [SerializeField] int _maxHP;
     [SerializeField] Image _hpImage;
     [SerializeField] Text _currrentText;
     [SerializeField] Text _maxText;
-    [SerializeField]    float _damageInterval;
+    [SerializeField] float _damageInterval;
+    [SerializeField]    Text _healCntText;
     public int _currentHP;
     bool _isHealing;
     bool _canTakeDamage = true;
@@ -24,6 +27,8 @@ public class PlayerHPController : MonoBehaviour
     {
         UpdateUIIncrease(_currentHP);
         _currentHP = _maxHP;
+        _currentHealItem = _maxHealItem;
+        UpdateUIHealCnt();
     }
 
     void Start()
@@ -42,8 +47,8 @@ public class PlayerHPController : MonoBehaviour
     }
     public void PlayerDamage(int damage)
     {
-        if(_isHealing) { return; }
-        if(!_canTakeDamage) { return; }
+        if (_isHealing) { return; }
+        if (!_canTakeDamage) { return; }
         _currentHP -= damage;
         _currentHP = Mathf.Clamp(_currentHP, 0, _maxHP);
         UpdateUIDecrease();
@@ -51,8 +56,16 @@ public class PlayerHPController : MonoBehaviour
     }
     public void PlayerHeal()
     {
+        if (_currentHealItem <= 0) { return; }
+        if (_currentHP >= _maxHP) { return; }
+        _currentHealItem--;
+        UpdateUIHealCnt();
         UpdateUIIncrease(_currentHP);
         _currentHP = _maxHP;
+    }
+    public void UpdateUIHealCnt()
+    {
+        _healCntText.text = _currentHealItem.ToString();
     }
     public void UpdateUIIncrease(int tempHp)
     {
@@ -89,7 +102,7 @@ public class PlayerHPController : MonoBehaviour
     IEnumerator DamageCoroutine()
     {
         _canTakeDamage = false;
-        yield return new WaitForSeconds( _damageInterval );
+        yield return new WaitForSeconds(_damageInterval);
         _canTakeDamage = true;
     }
 }
