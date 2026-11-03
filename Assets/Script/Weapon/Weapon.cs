@@ -66,7 +66,7 @@ public class Weapon : MonoBehaviour
         }
     }
 
-    public void FullAutoShot()
+    public void FullAutoShot(Transform firepoint)
     {
         //リロード中なら撃てない
         if (_reloadIntervalTimer > 0)
@@ -109,7 +109,7 @@ public class Weapon : MonoBehaviour
             Debug.Log("Raycast処理");
         }
     }
-    public void SemiAutoShot()
+    public void SemiAutoShot(Transform firepoint)
     {
         //リロード中なら撃てない
         if (_reloadIntervalTimer > 0)
@@ -170,7 +170,7 @@ public class Weapon : MonoBehaviour
         //補充予定の段数を保存
         _pendingReloadAmmo = addAmmo;
     }
-    public void EnhancedSemiAutoShot(float fireInterval, float damage)
+    public void EnhancedSemiAutoShot(float fireInterval, float damage, Transform firepoint)
     {
         //リロード中なら撃てない
         if (_reloadIntervalTimer > 0)
@@ -212,7 +212,7 @@ public class Weapon : MonoBehaviour
             Debug.Log("Raycast処理×" + damage);
         }
     }
-    public void EnhancedFullAutoShot(float fireInterval, float damage)
+    public void EnhancedFullAutoShot(float fireInterval, float damage, Transform firepoint)
     {
         //リロード中なら撃てない
         if (_reloadIntervalTimer > 0)
