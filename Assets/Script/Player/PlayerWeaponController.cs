@@ -18,7 +18,8 @@ public class PlayerWeaponController : MonoBehaviour
     [Header("予備弾薬所持数")]
     [SerializeField] int[] _ammo = new int[4];
     [SerializeField] WeaponUIController _weaponUIControllerCs;
-    [SerializeField]    TopRightUI _topRightUICs;
+    [SerializeField] TopRightUI _topRightUICs;
+    [SerializeField]    SpreadAreaView _spreadAreaViewCs;
 
     // 武器種ごとの予備弾薬の最大所持数
     Dictionary<WeaponType, int> _maxReserveAmmoDic =
@@ -40,6 +41,13 @@ public class PlayerWeaponController : MonoBehaviour
     public ReactiveProperty<int> CurrentSlotIndex = new ReactiveProperty<int>(2);
     //装備中の武器のWeapon.cs
     Weapon _weaponCs;
+    public WeaponData CurrentWeaponData
+    {
+        get
+        {
+            return _weaponCs != null ? _weaponCs._weaponData : null;
+        }
+    }
     //装備中の武器の見た目
     GameObject _equippedWeaponVisual;
 
@@ -138,7 +146,6 @@ public class PlayerWeaponController : MonoBehaviour
     }
     void Start()
     {
-
         CurrentSlotIndex.Subscribe(index =>
         {
             _currentSlotIndex = index;
@@ -147,14 +154,29 @@ public class PlayerWeaponController : MonoBehaviour
             {
                 _weaponCs =
                     _weaponSlot[index].GetComponent<Weapon>();
+
                 SubscribeMagazineAmmo(index);
-                Debug.Log("Weapon.cs取得");
+
+                // 装備中の武器データを取得
+                WeaponData weaponData = _weaponCs._weaponData;
+
+                // ショットガンの場合
+                if (weaponData._weaponType == WeaponType.ShotGun)
+                {
+                    _spreadAreaViewCs.SetSpreadAngle(
+                        weaponData._spreadAngle
+                    );
+
+                    _spreadAreaViewCs.SetDistance(
+                        weaponData._range
+                    );
+                }
             }
             else
             {
-                // 空のスロットに切り替えた場合も解除する
                 _magazineAmmoSubscription?.Dispose();
                 _reloadSubscription?.Dispose();
+
                 _weaponCs = null;
             }
         })
@@ -224,7 +246,7 @@ public class PlayerWeaponController : MonoBehaviour
             }
             if (Gamepad.current != null && Gamepad.current.rightShoulder.wasPressedThisFrame)
             {
-                
+
                 //_currentSlotIndex++;
                 //CurrentSlotIndex.Value++;
                 _currentSlotIndex = (_currentSlotIndex + 1) % 3;
@@ -283,7 +305,7 @@ public class PlayerWeaponController : MonoBehaviour
                 }
             }
             //コントローラー入力
-            if (Gamepad.current != null && Gamepad.current.buttonNorth.wasPressedThisFrame)
+            if (Gamepad.current != null && Gamepad.current.buttonSouth.wasPressedThisFrame)
             {
                 if (TryReload())
                 {
@@ -407,7 +429,7 @@ public class PlayerWeaponController : MonoBehaviour
                 }
             }
             //コントローラー入力
-            if (Gamepad.current != null && Gamepad.current.buttonNorth.wasPressedThisFrame)
+            if (Gamepad.current != null && Gamepad.current.buttonSouth.wasPressedThisFrame)
             {
                 //装備中の武器タイプ取得
                 WeaponType weaponType = _weaponCs._weaponData._weaponType;
@@ -650,11 +672,11 @@ public class PlayerWeaponController : MonoBehaviour
         {
             AmmoData ammoData = other.gameObject.GetComponent<Ammo>().AmmoData;
             //所持上限を超えていれば拾えない
-            if(!TryGetAmmo(ammoData._weaponType))
+            if (!TryGetAmmo(ammoData._weaponType))
             {
                 return;
             }
-            
+
             GetAmmo(ammoData._weaponType, ammoData._ammoCount);
             Destroy(other.gameObject);
         }

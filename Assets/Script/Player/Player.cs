@@ -7,12 +7,14 @@ public class Player : MonoBehaviour
     Rigidbody rb;
     [SerializeField]    float _moveSpeed;
     [SerializeField]    float _dodgeSpeed;
+    [SerializeField]    float _aimingSpeed;
     [SerializeField]    float _dodgeCoolTime;
     [SerializeField]    float _dodgeTime;
 
     float _dodgeCoolTimer = 0;
     float _dodgeTimer = 0;
     bool _isDodging;
+    public bool _isAiming;
     Vector3 _dodgeDirection;
     Vector2 _moveInput;
     Vector3 _moveDirection;
@@ -29,11 +31,22 @@ public class Player : MonoBehaviour
     void Update()
     {
         PlayerMove();
+        //キーボード入力
+        if (Input.GetKey(KeyCode.Mouse1) ||(Gamepad.current != null && Gamepad.current.leftTrigger.isPressed))
+        {
+            _isAiming = true;
+        }
+        else
+        {
+            _isAiming= false;
+        }
+
         PlayerDodge();
     }
     private void FixedUpdate()
     {
-        if( _isDodging)
+        Vector3 linearvelocity;
+        if ( _isDodging)
         {
             _dodgeTimer -= Time.fixedDeltaTime;
 
@@ -52,11 +65,22 @@ public class Player : MonoBehaviour
             rb.linearVelocity = dodgelinervelocity;
             return;
         }
+        else if(_isAiming)
+        {
+            _moveDirection = new Vector3(_moveInput.x, 0f, _moveInput.y);
+
+            linearvelocity = rb.linearVelocity;
+            linearvelocity.x = _moveDirection.x * _aimingSpeed;
+            linearvelocity.z = _moveDirection.z * _aimingSpeed;
+
+            rb.linearVelocity = linearvelocity;
+            return;
+        }
 
 
         _moveDirection = new Vector3(_moveInput.x, 0f, _moveInput.y);
 
-        Vector3 linearvelocity = rb.linearVelocity;
+        linearvelocity = rb.linearVelocity;
         linearvelocity.x = _moveDirection.x * _moveSpeed;
         linearvelocity.z = _moveDirection.z * _moveSpeed;
 

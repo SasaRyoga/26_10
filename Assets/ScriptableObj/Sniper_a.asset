@@ -20,6 +20,7 @@ MonoBehaviour:
   _fireInterval: 1
   _bulletSpeed: 50
   _damage: 60
+  _range: 100
   _magazineSize: 5
   _reloadTime: 2.5
   _bulletPrefab: {fileID: 0}

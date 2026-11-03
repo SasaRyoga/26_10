@@ -14,6 +14,7 @@ public class WeaponData : ScriptableObject
     public float _fireInterval;
     public float _bulletSpeed;
     public float _damage;
+    public float _range;
 
     [Header("Magazine Settings")]
     public int _magazineSize;
