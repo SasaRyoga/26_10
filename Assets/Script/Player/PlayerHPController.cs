@@ -1,6 +1,7 @@
 using DG.Tweening;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -38,7 +39,17 @@ public class PlayerHPController : MonoBehaviour
 
     void Update()
     {
-
+        //キーボード入力
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            PlayerHeal();
+        }
+        //コントローラー入力
+        if (Gamepad.current != null && Gamepad.current.dpad.up.wasPressedThisFrame)
+        {
+            PlayerHeal();
+        }
+        
     }
     public void EnhanceHP(int addHP)
     {

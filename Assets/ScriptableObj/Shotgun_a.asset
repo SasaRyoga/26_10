@@ -14,12 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WeaponData
   _weaponType: 1
   _fireMode: 0
-  _hitMethod: 0
+  _hitMethod: 1
   _projectileCount: 8
   _spreadAngle: 20
   _fireInterval: 0.8
   _bulletSpeed: 25
   _damage: 0
+  _range: 20
   _magazineSize: 6
   _reloadTime: 2
   _bulletPrefab: {fileID: 0}

@@ -47,8 +47,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2de50fe16802a3e40816a66797253b74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Weapon
-  _weaponData: {fileID: 11400000, guid: 4bd02a8c1b9afc7428992ee3d9a86a36, type: 2}
+  _weaponData: {fileID: 11400000, guid: 5e20ae58209ac1940b8b6c8e803c43e3, type: 2}
   _currentMagazineAmmo: 0
+  _currentMagazineAmmo2:
+    value: 0
+  _reloadIntervalTimer2:
+    value: 0
   _fireIntervalTimer: 0
   _reloadIntervalTimer: 0
 --- !u!33 &7345817733008605452

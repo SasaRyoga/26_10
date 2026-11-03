@@ -10,19 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 71ab184b6a5278f4f902127296584d19, type: 3}
-  m_Name: SMGAmmo
+  m_Name: SubM_b
   m_EditorClassIdentifier: Assembly-CSharp::WeaponData
   _weaponType: 0
-  _fireMode: 0
-  _hitMethod: 0
-  _projectileCount: 0
-  _spreadAngle: 0
-  _fireInterval: 0
-  _bulletSpeed: 0
-  _damage: 0
-  _magazineSize: 0
-  _reloadTime: 0
+  _fireMode: 1
+  _hitMethod: 1
+  _projectileCount: 1
+  _spreadAngle: 5
+  _fireInterval: 0.08
+  _bulletSpeed: 30
+  _damage: 7
+  _range: 100
+  _magazineSize: 40
+  _reloadTime: 1.8
   _bulletPrefab: {fileID: 0}
   _weaponPrefab: {fileID: 0}
-  _weaponName: 
-  _weaponIcon: {fileID: 0}
+  _weaponName: SBM_B
+  _weaponIcon: {fileID: 21300000, guid: 7b2dcaffa07fceb4d81774f15bc6ebe3, type: 3}
