@@ -21,6 +21,7 @@ public class PlayerWeaponController : MonoBehaviour
     [SerializeField] TopRightUI _topRightUICs;
     [SerializeField]    SpreadAreaView _spreadAreaViewCs;
 
+
     // 武器種ごとの予備弾薬の最大所持数
     Dictionary<WeaponType, int> _maxReserveAmmoDic =
         new Dictionary<WeaponType, int>();
@@ -273,12 +274,12 @@ public class PlayerWeaponController : MonoBehaviour
                 //キーボード入力
                 if (Input.GetKeyDown(KeyCode.Mouse0))
                 {
-                    _weaponCs.SemiAutoShot();
+                    _weaponCs.SemiAutoShot(_firePointTransform);
                 }
                 //コントローラー入力
                 if (Gamepad.current != null && Gamepad.current.rightTrigger.wasPressedThisFrame)
                 {
-                    _weaponCs.SemiAutoShot();
+                    _weaponCs.SemiAutoShot(_firePointTransform);
                 }
             }
             if (_weaponCs._weaponData._fireMode == FireMode.FullAuto)
@@ -286,12 +287,12 @@ public class PlayerWeaponController : MonoBehaviour
                 //キーボード入力
                 if (Input.GetKey(KeyCode.Mouse0))
                 {
-                    _weaponCs.FullAutoShot();
+                    _weaponCs.FullAutoShot(_firePointTransform);
                 }
                 //コントローラー入力
                 if (Gamepad.current != null && Gamepad.current.rightTrigger.isPressed)
                 {
-                    _weaponCs.FullAutoShot();
+                    _weaponCs.FullAutoShot(_firePointTransform);
                 }
             }
 
@@ -337,11 +338,11 @@ public class PlayerWeaponController : MonoBehaviour
                 {
                     if (weaponType == WeaponType.HandGun)
                     {
-                        _weaponCs.SemiAutoShot();
+                        _weaponCs.SemiAutoShot(_firePointTransform);
                     }
                     else
                     {
-                        _weaponCs.EnhancedSemiAutoShot(fireInterval, damagePrd);
+                        _weaponCs.EnhancedSemiAutoShot(fireInterval, damagePrd, _firePointTransform);
                     }
                 }
                 //コントローラー入力
@@ -349,11 +350,11 @@ public class PlayerWeaponController : MonoBehaviour
                 {
                     if (weaponType == WeaponType.HandGun)
                     {
-                        _weaponCs.SemiAutoShot();
+                        _weaponCs.SemiAutoShot(_firePointTransform);
                     }
                     else
                     {
-                        _weaponCs.EnhancedSemiAutoShot(fireInterval, damagePrd);
+                        _weaponCs.EnhancedSemiAutoShot(fireInterval, damagePrd, _firePointTransform);
                     }
                 }
             }
@@ -377,11 +378,11 @@ public class PlayerWeaponController : MonoBehaviour
                 {
                     if (weaponType == WeaponType.HandGun)
                     {
-                        _weaponCs.FullAutoShot();
+                        _weaponCs.FullAutoShot(_firePointTransform);
                     }
                     else
                     {
-                        _weaponCs.EnhancedFullAutoShot(fireInterval, damagePrd);
+                        _weaponCs.EnhancedFullAutoShot(fireInterval, damagePrd, _firePointTransform);
                     }
                 }
                 //コントローラー入力
@@ -389,11 +390,11 @@ public class PlayerWeaponController : MonoBehaviour
                 {
                     if (weaponType == WeaponType.HandGun)
                     {
-                        _weaponCs.FullAutoShot();
+                        _weaponCs.FullAutoShot(_firePointTransform);
                     }
                     else
                     {
-                        _weaponCs.EnhancedFullAutoShot(fireInterval, damagePrd);
+                        _weaponCs.EnhancedFullAutoShot(fireInterval, damagePrd, _firePointTransform);
                     }
                 }
 
