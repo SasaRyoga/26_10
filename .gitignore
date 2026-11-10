@@ -107,3 +107,8 @@ InitTestScene*.unity*
 
 # Auto-generated cache in Assets folder
 /[Aa]ssets/[Ss]ceneDependencyCache*
+
+# External Assets
+/Assets/Pixel Guns 2D/
+/Assets/Font/
+/Assets/Plugins/
